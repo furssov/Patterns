@@ -7,11 +7,14 @@
 #include <SFML/Graphics.hpp>
 
 #include <list>
-#include "Snapshot.h"
 
 
 using namespace sf;
 using namespace std;
+
+
+class Snapshot;
+
 class Figure {
 private:
     bool isCopy;
@@ -31,8 +34,6 @@ private:
     int m_windowHeight = 1000;
 
 public:
-
-     Snapshot* make_snapshot();
 
      Vector2f getMDirection() ;
 
@@ -86,10 +87,7 @@ public:
 
     virtual void remove(Figure *f);
 
-
-
-
-   virtual void deformation();
+    virtual void deformation();
 
     virtual Figure* clone() = 0;
 
@@ -105,6 +103,61 @@ public:
 
     virtual ~Figure();
 
+    virtual Snapshot* create_snap();
+};
+
+class Snapshot {
+private:
+    Figure *figure;
+
+    bool isCopy;
+
+    Shape *shape = NULL;
+
+    bool selected;
+
+    float x;
+    float y;
+
+    bool scale = true;
+
+    bool m_isStopped;
+    sf::Vector2f m_direction;
+
+public:
+
+
+    void restore()
+    {
+            figure->set_copy(isCopy);
+            figure->set_shape(shape);
+            if (selected)
+                figure->select();
+            else figure->deselect();
+            figure->setX(x);
+            figure->setY(y);
+            figure->setScale(scale);
+            figure->setStopped(m_isStopped);
+            figure->setMDirection(m_direction);
+            figure->get_shape()->setPosition(m_direction.x, m_direction.y);
+
+
+    }
+
+
+    Snapshot(Figure *figure, bool isCopy, Shape *shape, bool selected, float x, float y, bool scale, bool mIsStopped,
+             const Vector2f &mDirection)
+    {
+        this->figure = figure;
+        this->isCopy = isCopy;
+        this->shape = shape;
+        this->selected = selected;
+        this->x = x;
+        this->y = y;
+        this->scale = scale;
+        this->m_isStopped = mIsStopped;
+        this->m_direction = mDirection;
+    }
 };
 
 

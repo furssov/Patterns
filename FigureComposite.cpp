@@ -214,6 +214,13 @@ FigureComposite::~FigureComposite() {
     delete figures;
 }
 
+Snapshot *FigureComposite::create_snap() {
+    for(Figure *f : *figures)
+    {
+        f->create_snap();
+    }
+}
+
 
 
 

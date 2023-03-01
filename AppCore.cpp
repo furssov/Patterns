@@ -126,11 +126,11 @@ void AppCore::draw() {
 
 
             if (Keyboard::isKeyPressed(Keyboard::Enter)) {
-
+                take_snapshots();
             }
 
             if (Keyboard::isKeyPressed(Keyboard::RShift)) {
-
+                rollback();
             }
 
 
@@ -297,12 +297,30 @@ AppCore::~AppCore() {
     delete trace;
     delete figureComposite;
     delete alive_figures;
+    delete snapshots;
 }
 
 AppCore::AppCore(int w, int h) {
     window = new RenderWindow(VideoMode(w, h), "App");
     alive_figures = new list<Figure*>();
     unordered_map_of_prototypes = new unordered_map<int, Figure*>();
+    snapshots = new list<Snapshot*>();
+}
+
+void AppCore::take_snapshots() {
+    for (Figure *f : *alive_figures)
+    {
+        snapshots->push_back(f->create_snap());
+    }
+}
+
+void AppCore::rollback() {
+    for(Snapshot* s : *snapshots)
+    {
+        s->restore();
+    }
+    snapshots = new list<Snapshot*>();
+
 }
 
 

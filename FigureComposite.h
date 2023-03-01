@@ -11,6 +11,8 @@ class FigureComposite : public Figure{
 private:
     list<Figure*> *figures;
 public:
+    Snapshot *create_snap() override;
+
     ~FigureComposite() override;
 
     FigureComposite(float w, float h) ;

@@ -40,6 +40,9 @@ protected:
     static AppCore* appCore;
 
 private:
+
+    list<Snapshot*> *snapshots;
+
     RenderWindow *window;
 
     list<Figure*> *alive_figures;
@@ -52,6 +55,10 @@ private:
     Figure *current = NULL;
 
     FigureComposite *figureComposite;
+
+    void take_snapshots();
+
+    void rollback();
 
     bool is_in_composite = false;
 

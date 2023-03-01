@@ -2,7 +2,6 @@
 // Created by user on 08.02.23.
 //
 
-#include <fstream>
 #include "Figure.h"
 
 void Figure::add(Figure *f) {
@@ -98,6 +97,7 @@ void Figure::move(float x, float y) {
         }
 
         shape->setPosition(newPosition);
+        m_direction = newPosition;
     }
 }
 
@@ -217,6 +217,8 @@ void Figure::setMDirection(const Vector2f &mDirection) {
     m_direction = mDirection;
 }
 
-Snapshot* Figure::make_snapshot() {
+Snapshot *Figure::create_snap() {
     return new Snapshot(this, isCopy, shape, selected, x, y, scale, m_isStopped, m_direction);
 }
+
+
