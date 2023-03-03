@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <list>
+#include <fstream>
 
 
 using namespace sf;
@@ -77,7 +78,7 @@ public:
 
      Shape *get_shape();
 
-    bool isSelected();
+    virtual bool isSelected();
 
     void set_shape(Shape *s);
 
@@ -104,6 +105,8 @@ public:
     virtual ~Figure();
 
     virtual Snapshot* create_snap();
+
+    virtual void set_figures(list<Figure*> *l){}
 };
 
 class Snapshot {
@@ -123,12 +126,17 @@ private:
 
     bool m_isStopped;
     sf::Vector2f m_direction;
+    list<Figure*> *composites = nullptr;
 
 public:
 
+    Figure *get_figure()
+    {
+        return figure;
+    }
 
     void restore()
-    {
+    {       if (figure->getFigures() == nullptr) {
             figure->set_copy(isCopy);
             figure->set_shape(shape);
             if (selected)
@@ -140,8 +148,27 @@ public:
             figure->setStopped(m_isStopped);
             figure->setMDirection(m_direction);
             figure->get_shape()->setPosition(m_direction.x, m_direction.y);
+        } else
+        {
+            this->figure->set_figures(composites);
+        }
 
 
+    }
+
+    Snapshot(Figure *f)
+    {
+        if (f->getFigures() != nullptr)
+        {
+            composites = new list<Figure*>();
+            this->figure = f;
+            for (Figure *child : *figure->getFigures())
+            {
+                Figure *c = child->clone();
+                if (child->isSelected()) c->select();
+                composites->push_front(c);
+            }
+        }
     }
 
 
@@ -158,6 +185,10 @@ public:
         this->m_isStopped = mIsStopped;
         this->m_direction = mDirection;
     }
+
+
+
+
 };
 
 

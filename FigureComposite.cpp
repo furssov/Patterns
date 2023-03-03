@@ -215,10 +215,15 @@ FigureComposite::~FigureComposite() {
 }
 
 Snapshot *FigureComposite::create_snap() {
-    for(Figure *f : *figures)
-    {
-        f->create_snap();
-    }
+    return new Snapshot(this);
+}
+
+void FigureComposite::set_figures(list<Figure *> *l) {
+    figures = l;
+}
+
+bool FigureComposite::isSelected() {
+    return figures->front()->isSelected();
 }
 
 

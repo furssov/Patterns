@@ -2,6 +2,7 @@
 // Created by user on 08.02.23.
 //
 
+#include <fstream>
 #include "AppCore.h"
 
 
@@ -91,9 +92,11 @@ void AppCore::draw() {
                     }
                     else
                     {
-                        current->deselect();
-                        current=NULL;
-                        return false;
+                        if (current != NULL) {
+                            current->deselect();
+                            current = NULL;
+                            return false;
+                        }
                     }
                 }
             }
@@ -125,12 +128,16 @@ void AppCore::draw() {
             }
 
 
-            if (Keyboard::isKeyPressed(Keyboard::Enter)) {
-                take_snapshots();
+            if (ev.type == Event::KeyReleased) {
+                if (ev.key.code == sf::Keyboard::Enter) {
+                    take_snapshots();
+                }
             }
 
-            if (Keyboard::isKeyPressed(Keyboard::RShift)) {
-                rollback();
+            if (ev.type == Event::KeyReleased) {
+                if (ev.key.code == sf::Keyboard::RShift) {
+                    rollback();
+                }
             }
 
 
@@ -297,30 +304,53 @@ AppCore::~AppCore() {
     delete trace;
     delete figureComposite;
     delete alive_figures;
-    delete snapshots;
+   // delete snapshots;
 }
 
 AppCore::AppCore(int w, int h) {
     window = new RenderWindow(VideoMode(w, h), "App");
     alive_figures = new list<Figure*>();
     unordered_map_of_prototypes = new unordered_map<int, Figure*>();
-    snapshots = new list<Snapshot*>();
+  //  snapshots = new list<Snapshot*>();
 }
+
+
 
 void AppCore::take_snapshots() {
-    for (Figure *f : *alive_figures)
-    {
-        snapshots->push_back(f->create_snap());
+    ofstream file("/home/user/projects/lab4/my_objects.dat", std::ios::binary);
+    if (file.is_open()) {
+        file.clear();
+        int count = alive_figures->size();
+        file.write(reinterpret_cast<char*>(&count), sizeof(count));
+        for (Figure *f: *alive_figures) {
+            Snapshot *s = f->create_snap();
+            file.write(reinterpret_cast<char*>(s), sizeof(*s));
+            delete s;
+        }
+        file.close();
     }
 }
+
 
 void AppCore::rollback() {
-    for(Snapshot* s : *snapshots)
-    {
-        s->restore();
-    }
-    snapshots = new list<Snapshot*>();
+    std::ifstream file2("/home/user/projects/lab4/my_objects.dat", std::ios::binary);
 
+    if (file2.is_open()) {
+        int count2;
+        file2.read(reinterpret_cast<char*>(&count2), sizeof(count2));
+        for (int i = 0; i < count2; i++) {
+            Snapshot s(nullptr, false, nullptr, false, 0.0f, 0.0f, false, false, Vector2f(0.0f, 0.0f));
+            file2.read(reinterpret_cast<char*>(&s), sizeof(s));
+            s.restore();
+            if (s.get_figure()->isSelected()) {
+                current = s.get_figure();
+                current->select();
+            }
+        }
+        file2.close();
+    }
 }
+
+
 
 

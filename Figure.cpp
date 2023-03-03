@@ -12,6 +12,8 @@ Figure::Figure(float w, float h) {
     x = w;
     y = h;
     m_isStopped = false;
+    m_direction.x = w;
+    m_direction.y = h;
 }
 
 void Figure::visible() {

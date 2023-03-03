@@ -41,7 +41,7 @@ protected:
 
 private:
 
-    list<Snapshot*> *snapshots;
+   // list<Snapshot*> *snapshots;
 
     RenderWindow *window;
 
@@ -75,6 +75,8 @@ private:
     void draw();
 
     void create_figure_by_prototype();
+
+    void load_to_file();
 
 
 };

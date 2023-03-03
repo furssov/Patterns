@@ -33,6 +33,10 @@ public:
 
     void select() override;
 
+    void set_figures(list<Figure *> *l) override;
+
+    bool isSelected() override;
+
     void deselect() override;
 
     void move(float x, float y) override;
