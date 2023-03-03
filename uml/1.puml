@@ -1,0 +1,107 @@
+@startuml
+
+class AppCore
+{
+  *-  RenderWindow *window;
+   *- list<Figure*> *alive_figures;
+    *-unordered_map<int , Figure*> *unordered_map_of_prototypes;
+   *- Figure *trace;
+    *-Figure *current;
+    *-FigureComposite *figureComposite;
+   *- void take_snapshots();
+     *-   void rollback();
+         *-   bool is_in_composite = false;
+      *-      bool select(list<Figure *> *figures);
+        *-    void update(int e);
+          *-  void move_current_figure();
+      *-      void add(Figure *f);
+        *-    void remove(Figure *f);
+          *-  void draw();
+         *-   void create_figure_by_prototype();
+
+         *+ void start();
+           *+  static AppCore *get_instance(int w, int h);
+          *-  AppCore(int w, int h);
+            *-   static AppCore* appCore;
+}
+class Figure
+{
+ *-Shape* shape
+ *-bool isCopy
+ *-bool selected
+ *-float x
+ *-float y
+ *-bool scale
+ *-bool m_isStopped
+ *-sf::Vector2f m_direction
+
+ *+void move()
+ *+void add()
+ *+void remove()
+ *+void clone()
+ *+Snapshot* create_snap()
+ *+...()
+}
+Figure <|-- FigureComposite
+Figure <|-- Circle
+Figure <|-- Rectangle
+Figure <|-- Dot
+Figure <|-- elseLeafs
+Figure <- Snapshot
+AppCore o-- Figure
+AppCore o-- FigureComposite
+FigureComposite *-- Figure
+Snapshot *-- Figure
+class Snapshot
+{
+ *-Figure *figure
+   *- bool isCopy
+    *-Shape *shape
+    *-bool selected
+    *-float x
+    *-float y
+    *-bool scale
+    *-bool m_isStopped
+    *-sf::Vector2f m_direction
+    *-list<Figure*> *composites 
+   *+  void restore()
+   *+ Snapshot(Figure *f)
+     *+Snapshot(Figure *figure, bool isCopy...)
+}
+class FigureComposite
+{
+ *-list<Figure*> *figures
+ *+Snapshot *create_snap()
+ *+void move()
+ *+void add()
+ *+ void remove()
+  *+void clone()
+  *+...()
+}
+
+class Circle
+{
+ *+Circle (float w1, float h1)
+  *+Figure *clone()  override
+}
+class Rectangle
+{
+*+Rectangle (float w1, float h1)
+*+Figure *clone()  override
+}
+class Dot
+{
+Dot (float w1, float h1)
+Figure *clone()  override
+}
+class elseLeafs
+{
+...
+...()
+}
+
+
+
+
+
+@enduml

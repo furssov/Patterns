@@ -76,7 +76,6 @@ private:
 
     void create_figure_by_prototype();
 
-    void load_to_file();
 
 
 };
